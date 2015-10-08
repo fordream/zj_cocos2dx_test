@@ -44,6 +44,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 #else
         glview = GLViewImpl::create("HelloWorldDemo");
 #endif
+        glview->setFrameSize(320, 480);
         director->setOpenGLView(glview);
     }
 
@@ -53,26 +54,47 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
 
+    //**************************************************************
+    //屏幕大小
+    auto screenSize = glview->getFrameSize();
+    //设计分辨率大小
+    auto designSize = Size(320, 480);
+    //资源大小
+    auto resourceSize = Size(640, 960);
+    
+    std::vector<std::string> searchPaths;
+    
+    if (screenSize.height > 960) {	//640x1136
+        designSize = Size(320, 568);
+        searchPaths.push_back("hd");
+    } else {
+        searchPaths.push_back("hd");
+    }
+    
+    director->setContentScaleFactor(resourceSize.width/designSize.width); //默认为1.0f
+    
+    FileUtils::getInstance()->setSearchPaths(searchPaths);
+    //**************************************************************
     // Set the design resolution
-    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
-    Size frameSize = glview->getFrameSize();
-    // if the frame's height is larger than the height of medium size.
-    if (frameSize.height > mediumResolutionSize.height)
-    {        
-        director->setContentScaleFactor(MIN(largeResolutionSize.height/designResolutionSize.height, largeResolutionSize.width/designResolutionSize.width));
-    }
-    // if the frame's height is larger than the height of small size.
-    else if (frameSize.height > smallResolutionSize.height)
-    {        
-        director->setContentScaleFactor(MIN(mediumResolutionSize.height/designResolutionSize.height, mediumResolutionSize.width/designResolutionSize.width));
-    }
-    // if the frame's height is smaller than the height of medium size.
-    else
-    {        
-        director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
-    }
-
-    register_all_packages();
+    glview->setDesignResolutionSize(designSize.width, designSize.height, ResolutionPolicy::FIXED_WIDTH);
+//    Size frameSize = glview->getFrameSize();
+//    // if the frame's height is larger than the height of medium size.
+//    if (frameSize.height > mediumResolutionSize.height)
+//    {        
+//        director->setContentScaleFactor(MIN(largeResolutionSize.height/designResolutionSize.height, largeResolutionSize.width/designResolutionSize.width));
+//    }
+//    // if the frame's height is larger than the height of small size.
+//    else if (frameSize.height > smallResolutionSize.height)
+//    {        
+//        director->setContentScaleFactor(MIN(mediumResolutionSize.height/designResolutionSize.height, mediumResolutionSize.width/designResolutionSize.width));
+//    }
+//    // if the frame's height is smaller than the height of medium size.
+//    else
+//    {        
+//        director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
+//    }
+//
+//    register_all_packages();
 
     // create a scene. it's an autorelease object
     auto scene = HelloWorld::createScene();
